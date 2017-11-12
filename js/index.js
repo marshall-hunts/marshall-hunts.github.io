@@ -7,6 +7,7 @@ var renderer;
 var dom;
 var sun;
 var ground;
+var game;
 var player;
 var mixer;
 var die;
@@ -40,6 +41,7 @@ var particleCount=20;
 var explosionPower =1.06;
 var particles;
 //var stats;
+var distanceMeter;
 var scoreText;
 var score;
 var hasCollided;
@@ -116,6 +118,22 @@ function createScene(){
   scoreText.style.color = "red";
   scoreText.style.fontFamily = "Creepster";
 	document.body.appendChild(scoreText);
+  
+  
+  distanceMeter = document.createElement('div');
+	distanceMeter.style.position = 'absolute';
+	//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+	distanceMeter.style.width = 100;
+	distanceMeter.style.height = 100;
+//	scoreText.style.backgroundColor = "blue";
+	distanceMeter.innerHTML = "0m";
+  distanceMeter.style.display = "block";
+	distanceMeter.style.top = 50 + 'px';
+	distanceMeter.style.right = 10 + 'px';
+ 	distanceMeter.style.fontSize = "50px";
+  distanceMeter.style.color = "grey";
+  distanceMeter.style.fontFamily = "Creepster";
+	document.body.appendChild(distanceMeter);
   
   var infoText = document.createElement('div');
 	infoText.style.position = 'absolute';
@@ -410,16 +428,34 @@ var health = 100;
       
       var timer = 0
       var animationSpeed = 0
+      var distanceCounter = 0
 function update(){
 	//stats.update();
   animationSpeed = clock.getDelta()
   if(mixer != undefined){
  mixer.update(Math.sin(animationSpeed))
  }
+  
+ 
   //Game over!!!
-  if(health == 0){
+  if(health < -4){
+    distanceCounter = localStorage.getItem("newscore")
+     console.log("high score is "+localStorage.getItem("newscore"));
+    distanceMeter.innerHTML = "highest distance: "+distanceCounter+"m"
+    setTimeout(function(){
+      gameOver();
+    },3000)
+  }
+  if(health <= 0){
   scoreText.textContent = "GAME OVER!!";
-  gameOver()
+   
+   if(distanceCounter > (localStorage.getItem("newscore"))){
+     localStorage.setItem("newscore", distanceCounter)
+    console.log("high score is "+localStorage.getItem("newscore"))
+   }
+    console.log("high score is "+localStorage.getItem("newscore"))
+  
+   // localStorage.removeItem("highscore")
   }
   /////
   if(player){
@@ -438,6 +474,8 @@ function update(){
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
     	addPathTree();
+      distanceCounter++;
+      distanceMeter.innerHTML = distanceCounter+"m"
     	if(!hasCollided){
 			
 		}
@@ -445,7 +483,7 @@ function update(){
     doTreeLogic();
     doExplosionLogic();
     render();
-	requestAnimationFrame(update);//request next update
+	game = requestAnimationFrame(update);//request next update
 }
 function doTreeLogic(){
 	var oneTree;
@@ -524,8 +562,8 @@ function render(){
     renderer.render(scene, camera);//draw
 }
 function gameOver () {
-  cancelAnimationFrame( globalRenderID );
-  window.clearInterval( powerupSpawnIntervalID );
+  cancelAnimationFrame(gameId);
+ // window.clearInterval( powerupSpawnIntervalID );
 }
 function onWindowResize() {
 	//resize & align
