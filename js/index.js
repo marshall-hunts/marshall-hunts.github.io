@@ -95,6 +95,9 @@ function createScene(){
 	orbitControl.minAzimuthAngle = -0.2;
 	orbitControl.maxAzimuthAngle = 0.2;
 	*/
+  ///create gate
+  
+  
 	window.addEventListener('resize', onWindowResize, false);//resize callback
 
 	document.onkeydown = handleKeyDown;
@@ -151,9 +154,12 @@ function addExplosion(){
 function createTreesPool(){
 	var maxTreesInPool=10;
 	var newTree;
+  var newGate
 	for(var i=0; i<maxTreesInPool;i++){
 		newTree=createTree();
+    newGate = createGate();
 		treesPool.push(newTree);
+    treesPool.push(newGate);
 	}
 }
 function handleKeyDown(keyEvent){
@@ -340,6 +346,8 @@ function addTree(inPath, row, isLeft){
 	
 	rollingGroundSphere.add(newTree);
 }
+
+
 function createTree(){
 	     var tree = new THREE.Tree({
     generations : 4,        // # for branch' hierarchy
@@ -360,8 +368,43 @@ var mesh = new THREE.Mesh(
 mesh.scale.set(0.5, 0.5, 0.5)
 mesh.visible = false
 scene.add(mesh);
+
+ 
+ // mesh.geometry.merge(gate, gate.matrix)
+  /////\\\\\\
 	return mesh;
 }
+
+function createGate(){
+   //gate
+   var loader = new THREE.TextureLoader();
+    loader.crossOrigin = '*';
+    var gateTexture = loader.load('https://raw.githubusercontent.com/marshall-hunts/game-assets/master/18337.gif')
+
+      var gatematerial = new THREE.MeshBasicMaterial( {
+       // color: "green",
+        color: "white",
+        map: gateTexture,
+        side:      THREE.DoubleSide
+      });
+//////////
+   var gategeometry = new THREE.PlaneGeometry( 5, 8, 32 );
+      
+
+      gategeometry.computeBoundingBox();
+     
+   
+      
+      
+      var gate = new THREE.Mesh( gategeometry, gatematerial );
+      scene.add( gate );
+     //cube.rotation.x = Math.PI/2
+      gate.material.transparent = true;
+  gate.updateMatrix();
+  gate.visible = false;
+  return gate;
+}
+
 var health = 100; 
 			scoreText.innerHTML=health.toString();
       
