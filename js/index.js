@@ -14,6 +14,7 @@ var die;
 var run;
 var jump;
 var roll;
+var completed = false
 //var orbitControl;
 var rollingGroundSphere;
 var heroSphere;
@@ -480,9 +481,11 @@ function update(){
  
   //Game over!!!
   if(health < 0){
-    distanceCounter = localStorage.getItem("newscore")
+    distanceCounter = distanceCounter
+    completed = true
      console.log("high score is "+localStorage.getItem("newscore"));
-    distanceMeter.innerHTML = "highest distance: "+distanceCounter+"m"
+    
+    distanceMeter.innerHTML = "completed distance: "+distanceCounter+"m"+"<br>highest distance: "+localStorage.getItem("newscore")+"m"
     //Alert.render('game over!!');
   }
   if(health <= 0){
@@ -513,7 +516,10 @@ function update(){
     if(clock.getElapsedTime()>treeReleaseInterval){
     	clock.start();
     	addPathTree();
-      distanceCounter++;
+      if(completed === false){
+         distanceCounter++;
+      }
+     
       distanceMeter.innerHTML = distanceCounter+"m"
     	if(!hasCollided){
 			
