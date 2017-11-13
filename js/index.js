@@ -45,6 +45,33 @@ var distanceMeter;
 var scoreText;
 var score;
 var hasCollided;
+//GAME OVER CUSTOM ALERT FUNCTION
+function customAlert(){
+  this.render=function(dialog){
+    var windH = window.innerHeight;
+    var windW = window.innerWidth;
+    var overlay = document.getElementById('overlay');
+    var alertbox = document.getElementById('alertbox');
+    
+    overlay.style.display = "block";
+    overlay.style.height = windH+"px";
+    
+      alertbox.style.left = (windW/2) - (550 * .5)+"px";
+			alertbox.style.top = "100px";
+			alertbox.style.display = "block";
+    
+      document.getElementById("alertheader").innerHTML = "Aknowledge this message";
+			document.getElementById("alertbody").innerHTML = dialog;
+			document.getElementById("alertfooter").innerHTML = "<input type='button' value='try again!!' onclick='alert(0)'>";
+    
+  }
+  this.ok=function(){
+    overlay.style.display = "none";
+    alertbox.style.display = "none";
+  }
+}
+
+var Alert = new customAlert();
 ///////////////score-board\\\\\\\\\\\\\\\\\\\\\\\
 ///////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 init();
@@ -397,16 +424,27 @@ function createGate(){
    //gate
    var loader = new THREE.TextureLoader();
     loader.crossOrigin = '*';
-    var gateTexture = loader.load('https://raw.githubusercontent.com/marshall-hunts/game-assets/master/18337.gif')
+  //https://raw.githubusercontent.com/marshall-hunts/game-assets/master/PicsArt_11-12-04.48.39.png
+  //https://raw.githubusercontent.com/marshall-hunts/game-assets/master/18337.gif
+  
+    var gateTexture = loader.load('https://rawcdn.githack.com/marshall-hunts/game-assets/master/PicsArt_11-12-04.48.39.png')
 
-      var gatematerial = new THREE.MeshBasicMaterial( {
+      var gatematerial1 = new THREE.MeshBasicMaterial( {
        // color: "green",
         color: "white",
         map: gateTexture,
         side:      THREE.DoubleSide
       });
+  
+   var gatematerial2 = new THREE.MeshBasicMaterial( {
+       // color: "green",
+        color: "white",
+        map: loader.load('https://gitcdn.xyz/repo/marshall-hunts/game-assets/master/18337.gif'),
+        side:      THREE.DoubleSide
+      });
 //////////
-   var gategeometry = new THREE.PlaneGeometry( 5, 8, 32 );
+  
+   var gategeometry = new THREE.PlaneGeometry( 5, 5, 32 );
       
 
       gategeometry.computeBoundingBox();
@@ -414,9 +452,12 @@ function createGate(){
    
       
       
-      var gate = new THREE.Mesh( gategeometry, gatematerial );
+      var gate = new THREE.Mesh( gategeometry, gatematerial1);
       scene.add( gate );
      //cube.rotation.x = Math.PI/2
+  /* (Math.round(Math.random() * 5) === 0) {
+    gate.material = gatematerial2;
+  }*/
       gate.material.transparent = true;
   gate.updateMatrix();
   gate.visible = false;
@@ -438,13 +479,11 @@ function update(){
   
  
   //Game over!!!
-  if(health < -4){
+  if(health < 0){
     distanceCounter = localStorage.getItem("newscore")
      console.log("high score is "+localStorage.getItem("newscore"));
     distanceMeter.innerHTML = "highest distance: "+distanceCounter+"m"
-    setTimeout(function(){
-      gameOver();
-    },3000)
+    //Alert.render('game over!!');
   }
   if(health <= 0){
   scoreText.textContent = "GAME OVER!!";
